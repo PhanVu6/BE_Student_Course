@@ -1,6 +1,7 @@
 package com.example.taskmanagerstudent.controller;
 
 import com.example.taskmanagerstudent.dto.request.StudentDto;
+import com.example.taskmanagerstudent.dto.request.UpdateStudentCourseDto;
 import com.example.taskmanagerstudent.dto.response.ApiResponse;
 import com.example.taskmanagerstudent.repository.StudentRepository;
 import com.example.taskmanagerstudent.service.StudentService;
@@ -57,14 +58,15 @@ public class StudentController {
     /**
      * PUT
      */
-    @PutMapping("{id}")
-    public ApiResponse<StudentDto> update(@RequestBody @Valid StudentDto studentDto, @PathVariable("id") Long id) {
-        return studentService.update(studentDto, id);
+    @PutMapping("put")
+    public ApiResponse<StudentDto> update(@RequestBody @Valid UpdateStudentCourseDto inpUpdate) {
+        return studentService.update(inpUpdate);
     }
 
-    @PutMapping("delete-temp/{studentId}/{courseId}")
-    public ApiResponse<Boolean> deleteTemp(@PathVariable("studentId") Long studentId, @PathVariable("courseId") Long courseId, @RequestParam("status") String status) {
-        return studentService.deleteTemp(studentId, courseId, status);
+    @PutMapping("delete-temp/{studentId}")
+    public ApiResponse<Boolean> deleteTempStudent(@PathVariable("studentId") Long studentId,
+                                                  @RequestParam("status") String status) {
+        return studentService.deleteTempStudent(studentId, status);
     }
 
     /**
@@ -75,14 +77,9 @@ public class StudentController {
         return studentService.save(studentDto);
     }
 
-    @PostMapping("create")
-    public ApiResponse<StudentDto> create(@RequestBody StudentDto studentDto, @RequestParam("courseId") Long courseId) {
-        return studentService.create(studentDto, courseId);
-    }
-
     @PostMapping("save-many-course")
-    public ApiResponse<StudentDto> createStudentWithCourses(@RequestBody StudentDto studentDto) {
-        return studentService.createStudentWithCourses(studentDto);
+    public ApiResponse<StudentDto> create(@RequestBody StudentDto studentDto) {
+        return studentService.create(studentDto);
     }
 
     /**

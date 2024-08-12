@@ -2,6 +2,7 @@ package com.example.taskmanagerstudent.repository;
 
 import com.example.taskmanagerstudent.entity.Student_Course;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -17,6 +18,14 @@ public interface StudentCourseRepository extends JpaRepository<Student_Course, L
             @Param("studentId") Long studentId,
             @Param("courseId") Long courseId);
 
-    @Query("SELECT sc FROM Student_Course sc WHERE sc.student.id = :studentId AND sc.course.id IN :courseIds")
-    List<Student_Course> findByStudentIdAndCourseIds(@Param("studentId") Long studentId, @Param("courseIds") Set<Long> courseIds);
+    @Query("SELECT sc.course.id FROM Student_Course sc WHERE sc.student.id = :studentId")
+    List<Long> findByStudentIdAndCourseIds(@Param("studentId") Long studentId);
+
+    @Modifying
+    @Query("UPDATE Student_Course sc SET sc.status = :status WHERE sc.student.id = :studentId AND sc.course.id IN :courseIds")
+    void changeStatusByStudentIdAndCourseIds(@Param("studentId") Long studentId,
+                                             @Param("courseIds") Set<Long> courseIds,
+                                             @Param("status") String status);
+
+
 }

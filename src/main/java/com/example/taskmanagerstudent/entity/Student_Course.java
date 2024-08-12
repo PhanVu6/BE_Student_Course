@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class Student_Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 

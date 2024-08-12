@@ -26,14 +26,10 @@ public class StudentDto {
     @Email(message = "Email không đúng định dạng")
     private String email;
 
-    private String courses;
-
-    private CourseDto courseDto;
-
     @Pattern(regexp = "0|1", message = "Status phải là 0 hoặc 1")
     private String status;
 
-    private List<@Valid CourseDto> courseDtos;
+    private CourseDto courseDto;
 
-    private List<@Valid UpdateStudentCourseDto> updateStudentCourseDtos;
+    private List<@Valid CourseDto> courseDtos;
 }
