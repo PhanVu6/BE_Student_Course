@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -29,5 +30,10 @@ public class StudentDto {
 
     private CourseDto courseDto;
 
+    @Pattern(regexp = "0|1", message = "Status phải là 0 hoặc 1")
+    private String status;
+
     private List<@Valid CourseDto> courseDtos;
+
+    private List<@Valid UpdateStudentCourseDto> updateStudentCourseDtos;
 }

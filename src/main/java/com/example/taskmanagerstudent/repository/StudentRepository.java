@@ -26,7 +26,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             @Param("name") String name,
             Pageable pageable);
 
-    @Query(value = "SELECT s.id, s.name, s.email, c.id as courseId, c.title as courseTitle, c.description as courseDescription " +
+    @Query(value = "SELECT s.id, s.name, s.email, s.status, " +
+            "c.id as courseId, c.title as courseTitle, c.description as courseDescription, c.status as courseStatus " +
             "FROM Student s " +
             "LEFT JOIN Student_Course sc ON s.id = sc.student_id " +
             "LEFT JOIN Course c ON sc.course_id = c.id " +

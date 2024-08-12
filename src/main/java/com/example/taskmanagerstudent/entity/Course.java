@@ -25,6 +25,8 @@ public class Course {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "status")
+    private String status;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonBackReference

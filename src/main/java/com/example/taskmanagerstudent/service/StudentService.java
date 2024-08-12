@@ -7,6 +7,8 @@ import com.example.taskmanagerstudent.dto.response.ApiResponse;
 import com.example.taskmanagerstudent.entity.Course;
 import com.example.taskmanagerstudent.entity.Student;
 import com.example.taskmanagerstudent.entity.Student_Course;
+import com.example.taskmanagerstudent.exception.AppException;
+import com.example.taskmanagerstudent.exception.ErrorCode;
 import com.example.taskmanagerstudent.mapper.CourseMapper;
 import com.example.taskmanagerstudent.mapper.StudentMapper;
 import com.example.taskmanagerstudent.repository.CourseRepository;
@@ -56,10 +58,12 @@ public class StudentService {
             Long studentId = (Long) row[0];
             String studentName = (String) row[1];
             String studentEmail = (String) row[2];
+            String studentStatus = (String) row[3];
 
-            Long courseId = row[3] != null ? (Long) row[3] : null;
-            String courseTitle = courseId != null ? (String) row[4] : null;
-            String courseDescription = courseId != null ? (String) row[5] : null;
+            Long courseId = (Long) row[4];
+            String courseTitle = courseId != null ? (String) row[5] : null;
+            String courseDescription = courseId != null ? (String) row[6] : null;
+            String courseStatus = courseId != null ? (String) row[7] : null;
 
             StudentDto studentDto = studentMap.get(studentId);
             if (studentDto == null) {
@@ -67,18 +71,27 @@ public class StudentService {
                         .id(studentId)
                         .name(studentName)
                         .email(studentEmail)
+                        .status(studentStatus)
                         .courseDtos(new ArrayList<>())
                         .build();
                 studentMap.put(studentId, studentDto);
             }
 
+
             if (courseId != null) {
-                CourseDto courseDto = CourseDto.builder()
-                        .id(courseId)
-                        .title(courseTitle)
-                        .description(courseDescription)
-                        .build();
-                studentDto.getCourseDtos().add(courseDto);
+                Student_Course studentCourse = studentCourseRepository
+                        .findByStudentAndCourse(studentId, courseId)
+                        .orElseThrow(() -> new AppException(ErrorCode.STUDENT_EXISTS_COURSE));
+
+                if (studentCourse.getStatus().equals("1")) {
+                    CourseDto courseDto = CourseDto.builder()
+                            .id(courseId)
+                            .title(courseTitle)
+                            .description(courseDescription)
+                            .status(courseStatus)
+                            .build();
+                    studentDto.getCourseDtos().add(courseDto);
+                }
             }
         }
 
@@ -112,6 +125,7 @@ public class StudentService {
                         .id(student.getId())
                         .name(student.getName())
                         .email(student.getEmail())
+                        .status(student.getStatus())
                         .courseDtos(new ArrayList<>())
                         .build();
                 studentDtoMap.put(student.getId(), studentDto);
@@ -119,12 +133,19 @@ public class StudentService {
 
             //Nếu course không null, tạo CourseDto và thêm vào danh sách courseDtos của StudentDto
             if (course != null) {
-                CourseDto courseDto = CourseDto.builder()
-                        .id(course.getId())
-                        .title(course.getTitle())
-                        .description(course.getDescription())
-                        .build();
-                studentDto.getCourseDtos().add(courseDto);
+                Student_Course studentCourse = studentCourseRepository
+                        .findByStudentAndCourse(student.getId(), course.getId())
+                        .orElseThrow(() -> new AppException(ErrorCode.STUDENT_EXISTS_COURSE));
+
+                if (studentCourse.getStatus().equals("1")) {
+                    CourseDto courseDto = CourseDto.builder()
+                            .id(course.getId())
+                            .title(course.getTitle())
+                            .description(course.getDescription())
+                            .status(course.getStatus())
+                            .build();
+                    studentDto.getCourseDtos().add(courseDto);
+                }
             }
         }
 
@@ -143,7 +164,17 @@ public class StudentService {
         Student student = (Student) results.get(0)[0];
 
         List<Course> courses = results.stream()
-                .map(result -> (Course) result[1])
+                .map(result -> {
+                    Course course = (Course) result[1];
+                    Student_Course studentCourse = studentCourseRepository
+                            .findByStudentAndCourse(studentId, course.getId())
+                            .orElseThrow(() -> new AppException(ErrorCode.STUDENT_EXISTS_COURSE));
+
+                    if (studentCourse.getStatus().equals("1")) {
+                        return course;
+                    }
+                    return null;
+                })
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -166,25 +197,38 @@ public class StudentService {
         Long id = (Long) results.get(0)[0];
         String studentName = (String) results.get(0)[1];
         String email = (String) results.get(0)[2];
+        String status = (String) results.get(0)[3];
 
         // Map student
         StudentDto studentDtos = new StudentDto();
         studentDtos.setId(id);
         studentDtos.setName(studentName);
         studentDtos.setEmail(email);
+        studentDtos.setStatus(status);
 
         // Map course
         List<CourseDto> courseDtos = results.stream()
                 .map(result -> {
-                    Long courseId = (Long) result[3];
-                    String courseTitle = (String) result[4];
-                    String courseDescription = (String) result[5];
+                    Long courseId = (Long) result[4];
+                    String courseTitle = (String) result[5];
+                    String courseDescription = (String) result[6];
+                    String courseStatus = (String) result[6];
 
-                    CourseDto course = new CourseDto();
-                    course.setId(courseId);
-                    course.setTitle(courseTitle);
-                    course.setDescription(courseDescription);
-                    return course;
+                    if (courseId != null) {
+                        Student_Course studentCourse = studentCourseRepository
+                                .findByStudentAndCourse(studentId, courseId)
+                                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_EXISTS_COURSE));
+
+                        if (studentCourse.getStatus().equals("1")) {
+                            CourseDto course = new CourseDto();
+                            course.setId(courseId);
+                            course.setTitle(courseTitle);
+                            course.setDescription(courseDescription);
+                            course.setStatus(courseStatus);
+                            return course;
+                        }
+                    }
+                    return null;
                 })
                 .collect(Collectors.toList());
 
@@ -203,8 +247,60 @@ public class StudentService {
      */
     @Transactional
     public ApiResponse<StudentDto> update(StudentDto studentDto, Long id) {
+
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy student id = " + id));
+
+        studentMapper.updateStudentByStudentDto(studentDto, student);
+        student.setId(id);
+
+        List<Long> courseIds = studentDto.getCourseDtos().stream()
+                .map(CourseDto::getId)
+                .collect(Collectors.toList());
+
+        List<Course> courses = courseRepository.findAllById(courseIds);
+
+        // Tạo danh sách Student_Course mới
+        Set<Student_Course> updatedStudentCourses = new HashSet<>();
+
+        for (Course course : courses) {
+            CourseDto courseDto = studentDto.getCourseDtos().stream()
+                    .filter(dto -> dto.getId().equals(course.getId()))
+                    .findFirst()
+                    .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
+
+            Student_Course studentCourse = studentCourseRepository
+                    .findByStudentAndCourse(student.getId(), course.getId())
+                    .orElseGet(() -> new Student_Course());
+
+            studentCourse.setStudent(student);
+            studentCourse.setCourse(course);
+            studentCourse.setStatus(courseDto.getStatus());
+            updatedStudentCourses.add(studentCourse);
+        }
+
+        // Cập nhật quan hệ giữa Student và Courses
+        student.setStudent_courses(updatedStudentCourses);
+        student = studentRepository.save(student);
+
+        // Chuyển đổi Student entity thành DTO để trả về
+        StudentDto result = studentMapper.toDto(student);
+        result.setCourseDtos(studentDto.getCourseDtos());
+
+        // Trả về ApiResponse với thông báo thành công
+        ApiResponse<StudentDto> response = new ApiResponse<>();
+        response.setResult(result);
+        response.setMessage("Cập nhật sinh viên thành công");
+        return response;
+    }
+
+
+    /**
+     * POST
+     */
+    @Transactional
+    public ApiResponse<StudentDto> createStudentWithCourses(StudentDto studentDto) {
+        Student student = new Student();
 
         student.setName(studentDto.getName());
         student.setEmail(studentDto.getEmail());
@@ -213,11 +309,8 @@ public class StudentService {
         Set<Student_Course> updatedStudentCourses = new HashSet<>();
         for (CourseDto courseDto : studentDto.getCourseDtos()) {
             Course course = courseRepository.findById(courseDto.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Không tồn tại khóa học" + courseDto.getId()));
+                    .orElseGet(() -> new Course());
 
-            course.setTitle(courseDto.getTitle());
-            course.setDescription(courseDto.getDescription());
-            course = courseRepository.save(course);
 
             Student_Course studentCourse = studentCourseRepository
                     .findByStudentAndCourse(student.getId(), course.getId())
@@ -225,13 +318,11 @@ public class StudentService {
 
             studentCourse.setStudent(student);
             studentCourse.setCourse(course);
-            studentCourse.setStatus("1");
+            studentCourse.setStatus(courseDto.getStatus());
             updatedStudentCourses.add(studentCourse);
         }
 
-        student.getStudent_courses().clear();
-        student.getStudent_courses().addAll(updatedStudentCourses);
-
+        student.setStudent_courses(updatedStudentCourses);
         student = studentRepository.save(student);
 
         StudentDto result = studentMapper.toDto(student);
@@ -239,42 +330,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> response = new ApiResponse<>();
         response.setResult(result);
-        response.setMessage("Cập nhật sinh viên thành công");
-        return response;
-    }
-
-    /**
-     * POST
-     */
-    @Transactional
-    public ApiResponse<StudentDto> createStudentWithCourses(StudentDto studentDto) {
-        Student student = new Student();
-        student.setName(studentDto.getName());
-        student.setEmail(studentDto.getEmail());
-
-        Student savedStudent = studentRepository.save(student);
-
-        for (CourseDto courseDto : studentDto.getCourseDtos()) {
-            Course course = courseRepository.findById(courseDto.getId())
-                    .orElseGet(() -> {
-                        Course newCourse = new Course();
-                        newCourse.setTitle(courseDto.getTitle());
-                        newCourse.setDescription(courseDto.getDescription());
-                        return courseRepository.save(newCourse);
-                    });
-
-            Student_Course studentCourse = new Student_Course();
-            studentCourse.setStudent(savedStudent);
-            studentCourse.setCourse(course);
-            studentCourse.setStatus("1");
-            studentCourseRepository.save(studentCourse);
-        }
-
-        studentDto.setId(savedStudent.getId());
-        ApiResponse<StudentDto> response = new ApiResponse<>();
-        response.setResult(studentDto);
-        response.setMessage("Thêm sinh viên thành công");
-
+        response.setMessage("Tạo sinh viên thành công");
         return response;
     }
 

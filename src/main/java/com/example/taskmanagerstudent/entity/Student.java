@@ -27,6 +27,9 @@ public class Student {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "status")
+    private String status;
+
     @OneToMany(mappedBy = "student", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonBackReference
     private Set<Student_Course> student_courses;
