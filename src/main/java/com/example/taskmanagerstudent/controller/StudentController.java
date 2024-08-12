@@ -62,11 +62,6 @@ public class StudentController {
         return studentService.update(studentDto, id);
     }
 
-    @PutMapping("update-to-course/{studentId}")
-    public ApiResponse<StudentDto> updateCoursesByStudent(@PathVariable("studentId") Long studentId, @RequestParam("courseId") Long courseId) {
-        return studentService.updateCoursesByStudent(studentId, courseId);
-    }
-
     @PutMapping("delete-temp/{studentId}/{courseId}")
     public ApiResponse<Boolean> deleteTemp(@PathVariable("studentId") Long studentId, @PathVariable("courseId") Long courseId, @RequestParam("status") String status) {
         return studentService.deleteTemp(studentId, courseId, status);

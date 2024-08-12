@@ -213,7 +213,7 @@ public class StudentService {
         Set<Student_Course> updatedStudentCourses = new HashSet<>();
         for (CourseDto courseDto : studentDto.getCourseDtos()) {
             Course course = courseRepository.findById(courseDto.getId())
-                    .orElseGet(() -> new Course());
+                    .orElseThrow(() -> new EntityNotFoundException("Không tồn tại khóa học" + courseDto.getId()));
 
             course.setTitle(courseDto.getTitle());
             course.setDescription(courseDto.getDescription());
@@ -236,18 +236,11 @@ public class StudentService {
 
         StudentDto result = studentMapper.toDto(student);
         result.setCourseDtos(studentDto.getCourseDtos());
-        
+
         ApiResponse<StudentDto> response = new ApiResponse<>();
         response.setResult(result);
         response.setMessage("Cập nhật sinh viên thành công");
         return response;
-    }
-
-
-    @Transactional
-    public ApiResponse<StudentDto> updateCoursesByStudent(Long studentId, Long courseId) {
-        studentCourseService.update(studentId, courseId);
-        return getOneJpql(studentId);
     }
 
     /**
