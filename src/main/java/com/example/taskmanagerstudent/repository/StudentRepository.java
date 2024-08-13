@@ -20,7 +20,8 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             countQuery = "select count(distinct s) " +
                     "from Student s " +
                     "left join s.student_courses sc on sc.status = '1' " +
-                    "where (:name is null or s.name like %:name%)")
+                    "where (:name is null or s.name like %:name%) " +
+                    "and sc.status = '1'")
     Page<Object[]> searchStudent(
             @Param("name") String name,
             Pageable pageable);
@@ -34,7 +35,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "ORDER BY s.id",
             countQuery = "SELECT COUNT(DISTINCT s.id) " +
                     "FROM Student s " +
-                    "LEFT JOIN Student_Course sc ON s.id = sc.student_id " +
+                    "LEFT JOIN Student_Course sc ON s.id = sc.student_id and sc.status like 1 " +
                     "LEFT JOIN Course c ON sc.course_id = c.id " +
                     "WHERE :name IS NULL OR s.name LIKE %:name%",
             nativeQuery = true)
@@ -65,7 +66,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "GROUP BY s.id",
             countQuery = "SELECT COUNT(DISTINCT s.id) " +
                     "FROM student s " +
-                    "LEFT JOIN student_course sc ON s.id = sc.student_id " +
+                    "LEFT JOIN student_course sc ON s.id = sc.student_id and sc.status LIKE 1 " +
                     "LEFT JOIN course c ON sc.course_id = c.id " +
                     "WHERE :name is null or s.name LIKE %:name%",
             nativeQuery = true)

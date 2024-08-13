@@ -41,14 +41,13 @@ public class StudentService {
 
     private StudentMapper studentMapper = StudentMapper.INSTANCE;
     private CourseMapper courseMapper = CourseMapper.INSTANCE;
-    private Locale locale = LocaleContextHolder.getLocale();
 
     /**
      * GET
      */
     public ApiResponse<Page<StudentDto>> searchStudentAndTitleCourse(String name, int number, int size) {
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
-        response.setMessage(messageSource.getMessage("error.operation", null, locale));
+        response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> results = studentRepository.searchStudentAndTitleCourses(name, pageable);
@@ -68,14 +67,14 @@ public class StudentService {
         Page<StudentDto> result = new PageImpl<>(studentDtos, pageable, results.getTotalElements());
 
         response.setResult(result);
-        response.setMessage(messageSource.getMessage("success.operation", null, locale));
+        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
         return response;
     }
 
 
-    public ApiResponse<Page<StudentDto>> searchGetByNative(String nameStudent, int number, int size, Locale locale) {
+    public ApiResponse<Page<StudentDto>> searchGetByNative(String nameStudent, int number, int size) {
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
-        response.setMessage(messageSource.getMessage("error.operation", null, locale));
+        response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> searchList = studentRepository.searchByStudentCourses(nameStudent, pageable);
@@ -114,12 +113,12 @@ public class StudentService {
                 studentDto.getCourseDtos().add(courseDto);
             }
         }
-        
+
         List<StudentDto> result = new ArrayList<>(studentMap.values());
         Page<StudentDto> results = new PageImpl<>(result, pageable, searchList.getTotalElements());
 
         response.setResult(results);
-        response.setMessage(messageSource.getMessage("success.operation", null, locale));
+        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
 
         return response;
     }
@@ -127,7 +126,7 @@ public class StudentService {
 
     public ApiResponse<Page<StudentDto>> searchGetByJPQL(String nameStudent, int number, int size) {
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
-        response.setMessage(messageSource.getMessage("error.operation", null, locale));
+        response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> resultsSearch = studentRepository.searchStudent(nameStudent, pageable);
@@ -166,7 +165,7 @@ public class StudentService {
 
         Page<StudentDto> results = new PageImpl<>(studentDtos, pageable, resultsSearch.getTotalElements());
         response.setResult(results);
-        response.setMessage(messageSource.getMessage("success.operation", null, locale));
+        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
 
         return response;
     }
@@ -191,7 +190,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> apiResponse = new ApiResponse<>();
         apiResponse.setResult(result);
-        apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
+        apiResponse.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
         return apiResponse;
     }
 
@@ -237,7 +236,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> apiResponse = new ApiResponse<>();
         apiResponse.setResult(studentDto);
-        apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
+        apiResponse.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
 
         return apiResponse;
     }
@@ -306,7 +305,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> response = new ApiResponse<>();
         response.setResult(result);
-        response.setMessage(messageSource.getMessage("success.update", null, locale));
+        response.setMessage(messageSource.getMessage("success.update", null, LocaleContextHolder.getLocale()));
         return response;
     }
 
@@ -358,7 +357,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> response = new ApiResponse<>();
         response.setResult(resultDto);
-        response.setMessage(messageSource.getMessage("success.create", null, locale));
+        response.setMessage(messageSource.getMessage("success.create", null, LocaleContextHolder.getLocale()));
 
         return response;
     }
@@ -371,10 +370,10 @@ public class StudentService {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
 
         apiResponse.setResult(false);
-        apiResponse.setMessage(messageSource.getMessage("error.operation", null, locale));
+        apiResponse.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
         if (!studentRepository.existsById(studentId)) {
-            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, locale));
+            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, LocaleContextHolder.getLocale()));
             apiResponse.setResult(false);
             return apiResponse;
         }
@@ -386,7 +385,7 @@ public class StudentService {
             student.setStatus(status);
             student = studentRepository.save(student);
             apiResponse.setResult(true);
-            apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
+            apiResponse.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
             return apiResponse;
         } catch (Exception e) {
             e.printStackTrace();
@@ -398,14 +397,14 @@ public class StudentService {
     public ApiResponse<Boolean> delete(Long id) {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
         if (!studentRepository.existsById(id)) {
-            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, locale));
+            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, LocaleContextHolder.getLocale()));
             apiResponse.setResult(false);
             return apiResponse;
         }
 
         studentRepository.deleteById(id);
 
-        apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
+        apiResponse.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
         apiResponse.setResult(true);
         return apiResponse;
     }

@@ -17,9 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.WebRequest;
-
-import java.util.Locale;
 
 @RestController
 @RequestMapping("student")
@@ -54,15 +51,12 @@ public class StudentController {
     }
 
     @GetMapping("search-native")
-    public ApiResponse<Page<StudentDto>> searchGetByQuery(@RequestParam(value = "name", required = false)
-                                                          @Nullable
-                                                          @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
-                                                          @RequestParam(value = "number", required = false, defaultValue = "0") int number,
-                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                          WebRequest request) {
-        Locale locale = request.getHeader("Accept-Language") != null ?
-                Locale.forLanguageTag(request.getHeader("Accept-Language")) : Locale.getDefault();
-        ApiResponse<Page<StudentDto>> result = studentService.searchGetByNative(nameStudent, number, size, locale);
+    public ApiResponse<Page<StudentDto>> searchGetByNative(@RequestParam(value = "name", required = false)
+                                                           @Nullable
+                                                           @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
+                                                           @RequestParam(value = "number", required = false, defaultValue = "0") int number,
+                                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        ApiResponse<Page<StudentDto>> result = studentService.searchGetByNative(nameStudent, number, size);
         return result;
     }
 
