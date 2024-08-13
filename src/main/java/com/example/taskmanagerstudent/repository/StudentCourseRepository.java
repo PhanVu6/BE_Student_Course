@@ -13,6 +13,8 @@ import java.util.Set;
 public interface StudentCourseRepository extends JpaRepository<Student_Course, Long> {
     List<Student_Course> findByStudentId(Long studentId);
 
+    List<Student_Course> findByStudentIdInAndCourseIdIn(Set<Long> studentIds, Set<Long> courseIds);
+
     @Query(value = "FROM Student_Course sc WHERE sc.student.id = :studentId and sc.course.id = :courseId")
     Optional<Student_Course> findByStudentAndCourse(
             @Param("studentId") Long studentId,

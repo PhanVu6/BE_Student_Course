@@ -13,7 +13,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query(value = "select distinct s, c " +
             "from Student s " +
             "left join fetch s.student_courses sc " +
-            "left join sc.course c " +
+            "left join fetch sc.course c " +
             "where :name is null or s.name like %:name% " +
             "order by s.id ",
             countQuery = "select count(distinct s) " +
@@ -60,7 +60,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query(value = "SELECT s.*, " +
             "GROUP_CONCAT(c.title SEPARATOR ', ') AS courses " +
             "FROM student s " +
-            "LEFT JOIN student_course sc ON s.id = sc.student_id " +
+            "LEFT JOIN student_course sc ON s.id = sc.student_id and sc.status LIKE 1 " +
             "LEFT JOIN course c ON sc.course_id = c.id " +
             "WHERE :name is null or s.name LIKE %:name% " +
             "GROUP BY s.id",
@@ -70,5 +70,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
                     "LEFT JOIN course c ON sc.course_id = c.id " +
                     "WHERE :name is null or s.name LIKE %:name%",
             nativeQuery = true)
-    Page<Object[]> searchStudentAndTitleCourse(@Param("name") String name, Pageable pageable);
+    Page<Object[]> searchStudentAndTitleCourses(@Param("name") String name, Pageable pageable);
+
 }

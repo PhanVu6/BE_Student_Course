@@ -47,10 +47,11 @@ public class StudentService {
      * GET
      */
     public ApiResponse<Page<StudentDto>> searchStudentAndTitleCourse(String name, int number, int size) {
-
+        ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
+        response.setMessage(messageSource.getMessage("error.operation", null, locale));
 
         Pageable pageable = PageRequest.of(number, size);
-        Page<Object[]> results = studentRepository.searchStudentAndTitleCourse(name, pageable);
+        Page<Object[]> results = studentRepository.searchStudentAndTitleCourses(name, pageable);
 
         List<StudentDto> studentDtos = results.getContent()
                 .stream().map(result -> {
@@ -66,7 +67,6 @@ public class StudentService {
 
         Page<StudentDto> result = new PageImpl<>(studentDtos, pageable, results.getTotalElements());
 
-        ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
         response.setResult(result);
         response.setMessage(messageSource.getMessage("success.operation", null, locale));
         return response;
@@ -74,6 +74,9 @@ public class StudentService {
 
 
     public ApiResponse<Page<StudentDto>> searchGetByNative(String nameStudent, int number, int size, Locale locale) {
+        ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
+        response.setMessage(messageSource.getMessage("error.operation", null, locale));
+
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> searchList = studentRepository.searchByStudentCourses(nameStudent, pageable);
 
@@ -122,7 +125,6 @@ public class StudentService {
         List<StudentDto> result = new ArrayList<>(studentMap.values());
         Page<StudentDto> results = new PageImpl<>(result, pageable, searchList.getTotalElements());
 
-        ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
         response.setResult(results);
         response.setMessage(messageSource.getMessage("success.operation", null, locale));
 
@@ -130,9 +132,37 @@ public class StudentService {
     }
 
 
-    public Page<StudentDto> searchGetByJPQL(String nameStudent, int number, int size) {
+    public ApiResponse<Page<StudentDto>> searchGetByJPQL(String nameStudent, int number, int size) {
+        ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
+        response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
+
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> resultsSearch = studentRepository.searchStudent(nameStudent, pageable);
+
+        // Collect all the student IDs and course IDs from the results
+        Set<Long> studentIds = new HashSet<>();
+        Set<Long> courseIds = new HashSet<>();
+
+        for (Object[] result : resultsSearch.getContent()) {
+            Student student = (Student) result[0];
+            Course course = (Course) result[1];
+
+            studentIds.add(student.getId());
+            if (course != null) {
+                courseIds.add(course.getId());
+            }
+        }
+
+        // Fetch all the relevant Student_Course entities in one query
+        List<Student_Course> studentCourses = studentCourseRepository
+                .findByStudentIdInAndCourseIdIn(studentIds, courseIds);
+
+        // Map the Student_Course entities by student and course ID
+        Map<Long, Map<Long, Student_Course>> studentCourseMap = studentCourses.stream()
+                .collect(Collectors.groupingBy(
+                        sc -> sc.getStudent().getId(),
+                        Collectors.toMap(sc -> sc.getCourse().getId(), sc -> sc)
+                ));
 
         Map<Long, StudentDto> studentDtoMap = new HashMap<>();
 
@@ -154,11 +184,10 @@ public class StudentService {
             }
 
             if (course != null) {
-                Student_Course studentCourse = studentCourseRepository
-                        .findByStudentAndCourse(student.getId(), course.getId())
-                        .orElseThrow(() -> new AppException(ErrorCode.STUDENT_EXISTS_COURSE));
+                Student_Course studentCourse = studentCourseMap.getOrDefault(student.getId(), Collections.emptyMap())
+                        .get(course.getId());
 
-                if (studentCourse.getStatus().equals("1")) {
+                if (studentCourse != null && "1".equals(studentCourse.getStatus())) {
                     CourseDto courseDto = CourseDto.builder()
                             .id(course.getId())
                             .title(course.getTitle())
@@ -170,10 +199,15 @@ public class StudentService {
             }
         }
 
-        List<StudentDto> results = new ArrayList<>(studentDtoMap.values());
+        List<StudentDto> studentDtos = new ArrayList<>(studentDtoMap.values());
 
-        return new PageImpl<>(results, pageable, resultsSearch.getTotalElements());
+        Page<StudentDto> results = new PageImpl<>(studentDtos, pageable, resultsSearch.getTotalElements());
+        response.setResult(results);
+        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
+
+        return response;
     }
+
 
     public ApiResponse<StudentDto> getOneJpql(Long studentId) {
         List<Object[]> results = studentRepository.getStudentById(studentId);

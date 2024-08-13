@@ -39,7 +39,7 @@ public class StudentController {
                                                  @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                  @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(number, size);
-        Page<Object[]> result = studentRepository.searchStudentAndTitleCourse(nameStudent, pageable);
+        Page<Object[]> result = studentRepository.searchStudentAndTitleCourses(nameStudent, pageable);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -67,13 +67,13 @@ public class StudentController {
     }
 
     @GetMapping("search-jpql")
-    public ResponseEntity<Page<StudentDto>> searchGetByJPQL(@RequestParam(value = "name", required = false)
-                                                            @Nullable
-                                                            @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
-                                                            @RequestParam(value = "number", required = false, defaultValue = "0") int number,
-                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
-        Page<StudentDto> result = studentService.searchGetByJPQL(nameStudent, number, size);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public ApiResponse<Page<StudentDto>> searchGetByJPQL(@RequestParam(value = "name", required = false)
+                                                         @Nullable
+                                                         @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
+                                                         @RequestParam(value = "number", required = false, defaultValue = "0") int number,
+                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        ApiResponse<Page<StudentDto>> result = studentService.searchGetByJPQL(nameStudent, number, size);
+        return result;
     }
 
     @GetMapping("get-student-jpql/{id}")

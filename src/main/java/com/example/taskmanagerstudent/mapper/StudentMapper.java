@@ -18,14 +18,11 @@ public interface StudentMapper {
     @Mapping(target = "courseDtos", ignore = true)
     StudentDto toDto(Student student);
 
-//    @Mapping(target = "courseDtos", source = "courses")
-//    StudentDto toStudentDto(Student student, List<CourseDto> courses);
-
     List<Student> STUDENT_LIST(List<StudentDto> studentList);
 
     List<StudentDto> DTO_LIST(List<Student> studentList);
 
     void updateStudentByStudentDto(StudentDto studentDto, @MappingTarget Student student);
-    
+
     void updateEntityFromDto(StudentDto studentDto, @MappingTarget Student student);
 }
