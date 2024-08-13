@@ -32,8 +32,9 @@ public class StudentDto {
     @Pattern(regexp = "0|1", message = "error.statusInput")
     private String status;
 
+    @Valid
     private CourseDto courseDto;
-
+    
     private String courseTitles;
 
     private List<@Valid CourseDto> courseDtos;
