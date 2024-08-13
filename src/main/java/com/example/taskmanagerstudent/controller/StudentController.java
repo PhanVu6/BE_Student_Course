@@ -5,11 +5,17 @@ import com.example.taskmanagerstudent.dto.request.UpdateStudentCourseDto;
 import com.example.taskmanagerstudent.dto.response.ApiResponse;
 import com.example.taskmanagerstudent.repository.StudentRepository;
 import com.example.taskmanagerstudent.service.StudentService;
+import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
@@ -19,15 +25,38 @@ import java.util.Locale;
 @RequestMapping("student")
 @CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
+@Validated
 public class StudentController {
     private final StudentService studentService;
+    private final MessageSource messageSource;
     private final StudentRepository studentRepository;
 
     /**
      * GET
      */
+    @GetMapping("search-test")
+    public ResponseEntity<Page<Object[]>> search(@RequestParam(value = "name", required = false) String nameStudent,
+                                                 @RequestParam(value = "number", required = false, defaultValue = "0") int number,
+                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(number, size);
+        Page<Object[]> result = studentRepository.searchStudentAndTitleCourse(nameStudent, pageable);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("search")
+    public ApiResponse<Page<StudentDto>> searchStudentAndTitles(@RequestParam(value = "name", required = false)
+                                                                @Nullable
+                                                                @Size(max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
+                                                                @RequestParam(value = "number", required = false, defaultValue = "0") int number,
+                                                                @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        ApiResponse<Page<StudentDto>> result = studentService.searchStudentAndTitleCourse(nameStudent, number, size);
+        return result;
+    }
+
     @GetMapping("search-native")
-    public ApiResponse<Page<StudentDto>> searchGetByQuery(@RequestParam(value = "name", required = false) String nameStudent,
+    public ApiResponse<Page<StudentDto>> searchGetByQuery(@RequestParam(value = "name", required = false)
+                                                          @Nullable
+                                                          @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
                                                           @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                           @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                           WebRequest request) {
@@ -38,7 +67,9 @@ public class StudentController {
     }
 
     @GetMapping("search-jpql")
-    public ResponseEntity<Page<StudentDto>> searchGetByJPQL(@RequestParam(value = "name", required = false) String nameStudent,
+    public ResponseEntity<Page<StudentDto>> searchGetByJPQL(@RequestParam(value = "name", required = false)
+                                                            @Nullable
+                                                            @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
                                                             @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         Page<StudentDto> result = studentService.searchGetByJPQL(nameStudent, number, size);
@@ -72,13 +103,9 @@ public class StudentController {
     /**
      * POST
      */
-    @PostMapping
-    public ApiResponse<StudentDto> save(@RequestBody @Valid StudentDto studentDto) {
-        return studentService.save(studentDto);
-    }
 
     @PostMapping("save-many-course")
-    public ApiResponse<StudentDto> create(@RequestBody StudentDto studentDto) {
+    public ApiResponse<StudentDto> create(@RequestBody @Valid StudentDto studentDto) {
         return studentService.create(studentDto);
     }
 

@@ -43,12 +43,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             @Param("name") String name,
             Pageable pageable);
 
-
-    @Query("from Student st " +
-            "where st.name like %:name% or :name is null ")
-    Page<Student> getAll(@Param("name") String name, Pageable pageable);
-
-
     @Query("select s, c from Student s " +
             "left join fetch s.student_courses sc " +
             "left join fetch sc.course c " +
@@ -62,4 +56,19 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "WHERE s.id = :id",
             nativeQuery = true)
     List<Object[]> getStudentAndCourses(@Param("id") Long id);
+
+    @Query(value = "SELECT s.*, " +
+            "GROUP_CONCAT(c.title SEPARATOR ', ') AS courses " +
+            "FROM student s " +
+            "LEFT JOIN student_course sc ON s.id = sc.student_id " +
+            "LEFT JOIN course c ON sc.course_id = c.id " +
+            "WHERE :name is null or s.name LIKE %:name% " +
+            "GROUP BY s.id",
+            countQuery = "SELECT COUNT(DISTINCT s.id) " +
+                    "FROM student s " +
+                    "LEFT JOIN student_course sc ON s.id = sc.student_id " +
+                    "LEFT JOIN course c ON sc.course_id = c.id " +
+                    "WHERE :name is null or s.name LIKE %:name%",
+            nativeQuery = true)
+    Page<Object[]> searchStudentAndTitleCourse(@Param("name") String name, Pageable pageable);
 }

@@ -1,5 +1,7 @@
 package com.example.taskmanagerstudent.dto.request;
 
+import com.example.taskmanagerstudent.entity.Student;
+import com.example.taskmanagerstudent.repository.common.ExistsInDatabase;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -14,13 +16,15 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UpdateStudentCourseDto {
     @NotNull(message = "Giá trị không thể null")
+    @ExistsInDatabase(entity = Student.class, message = "error.notFound")
     private Long studentId;
-    @NotBlank(message = "Giá trị không thể rỗng")
-    @Size(max = 50, min = 3, message = "Tên không thể nằm ngoài khoảng [3,50] từ")
+
+    @NotBlank(message = "error.notBlank")
+    @Size(max = 50, min = 2, message = "error.invalidInput")
     private String name;
-    @Email(message = "Email không đúng định dạng")
+    @Email(message = "error.invalidInput")
     private String email;
-    @Pattern(regexp = "1|0", message = "Status phải là 1 hoặc 0")
+    @Pattern(regexp = "1|0", message = "error.statusInput")
     private String status;
     private Set<Long> courseIds;
 }

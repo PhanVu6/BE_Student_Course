@@ -38,13 +38,38 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
     private final StudentCourseRepository studentCourseRepository;
-    
+
     private StudentMapper studentMapper = StudentMapper.INSTANCE;
     private CourseMapper courseMapper = CourseMapper.INSTANCE;
 
     /**
      * GET
      */
+    public ApiResponse<Page<StudentDto>> searchStudentAndTitleCourse(String name, int number, int size) {
+        Pageable pageable = PageRequest.of(number, size);
+        Page<Object[]> results = studentRepository.searchStudentAndTitleCourse(name, pageable);
+
+        List<StudentDto> studentDtos = results.getContent()
+                .stream().map(result -> {
+                    StudentDto studentDto = new StudentDto();
+                    studentDto.setId((Long) result[0]);
+                    studentDto.setName((String) result[1]);
+                    studentDto.setEmail((String) result[2]);
+                    studentDto.setStatus((String) result[3]);
+                    studentDto.setCourseTitles((String) result[4]);
+
+                    return studentDto;
+                }).collect(Collectors.toList());
+
+        Page<StudentDto> result = new PageImpl<>(studentDtos, pageable, results.getTotalElements());
+
+        ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
+        response.setResult(result);
+        response.setMessage("Thành công");
+        return response;
+    }
+
+
     public ApiResponse<Page<StudentDto>> searchGetByNative(String nameStudent, int number, int size, Locale locale) {
 
         Pageable pageable = PageRequest.of(number, size);
@@ -350,19 +375,6 @@ public class StudentService {
     }
 
 
-    @Transactional
-    public ApiResponse<StudentDto> save(StudentDto studentDto) {
-        Student student = studentMapper.toEntity(studentDto);
-        student = studentRepository.save(student);
-        StudentDto result = studentMapper.toDto(student);
-
-        ApiResponse<StudentDto> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(result);
-        apiResponse.setMessage(result != null ? "Thành công tạo student" : "Thất bại tạo student");
-        return apiResponse;
-    }
-
-
     /**
      * DELETE
      */
@@ -390,7 +402,7 @@ public class StudentService {
     public ApiResponse<Boolean> delete(Long id) {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
         if (!studentRepository.existsById(id)) {
-            apiResponse.setMessage("Student không tồn tại");
+            apiResponse.setMessage("ID student không tồn tại");
             apiResponse.setResult(false);
             return apiResponse;
         }

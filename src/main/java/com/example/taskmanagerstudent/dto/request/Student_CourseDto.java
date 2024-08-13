@@ -21,7 +21,7 @@ public class Student_CourseDto {
     @Valid
     private CourseDto courseDto;
 
-    @Pattern(regexp = "0|1", message = "Status phải là 0 hoặc 1")
+    @Pattern(regexp = "0|1", message = "error.statusInput")
     private String status;
 
 }
