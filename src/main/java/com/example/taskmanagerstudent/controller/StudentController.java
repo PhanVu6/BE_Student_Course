@@ -9,35 +9,31 @@ import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("student")
-@CrossOrigin(origins = "http://localhost:5173")
+//@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 @Validated
 public class StudentController {
     private final StudentService studentService;
-    private final MessageSource messageSource;
     private final StudentRepository studentRepository;
 
     /**
      * GET
      */
-    @GetMapping("search-test")
-    public ResponseEntity<Page<Object[]>> search(@RequestParam(value = "name", required = false) String nameStudent,
-                                                 @RequestParam(value = "number", required = false, defaultValue = "0") int number,
-                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+    @GetMapping("aaa")
+    public Page<Object[]> search(@RequestParam(value = "name", required = false) String nameStudent,
+                                 @RequestParam(value = "number", required = false, defaultValue = "0") int number,
+                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(number, size);
-        Page<Object[]> result = studentRepository.searchStudentAndTitleCourses(nameStudent, pageable);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        Page<Object[]> result = studentRepository.searchStudent(nameStudent, pageable);
+        return result;
     }
 
     @GetMapping("search")
@@ -46,7 +42,8 @@ public class StudentController {
                                                                 @Size(max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
                                                                 @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
-        ApiResponse<Page<StudentDto>> result = studentService.searchStudentAndTitleCourse(nameStudent, number, size);
+        Pageable pageable = PageRequest.of(number, size);
+        ApiResponse<Page<StudentDto>> result = studentService.searchStudentAndTitleCourse(nameStudent, pageable);
         return result;
     }
 
@@ -56,7 +53,9 @@ public class StudentController {
                                                            @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
                                                            @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
-        ApiResponse<Page<StudentDto>> result = studentService.searchGetByNative(nameStudent, number, size);
+
+        Pageable pageable = PageRequest.of(number, size);
+        ApiResponse<Page<StudentDto>> result = studentService.searchGetByNative(nameStudent, pageable);
         return result;
     }
 

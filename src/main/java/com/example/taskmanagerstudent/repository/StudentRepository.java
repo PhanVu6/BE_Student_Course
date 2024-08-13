@@ -10,38 +10,37 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    @Query(value = "select distinct s, c " +
+    @Query(value = "SELECT s, c " +
             "from Student s " +
-            "left join fetch s.student_courses sc " +
-            "left join fetch sc.course c " +
+            "left join Student_Course sc on s.id = sc.student.id and sc.status = '1' " +
+            "left join Course c on sc.course.id = c.id " +
             "where (:name is null or s.name like %:name%) " +
-            "and sc.status = '1'" +
             "order by s.id",
-            countQuery = "select count(distinct s) " +
+            countQuery = "select count(distinct s.id) " +
                     "from Student s " +
-                    "left join s.student_courses sc on sc.status = '1' " +
-                    "where (:name is null or s.name like %:name%) " +
-                    "and sc.status = '1'")
+                    "left join Student_Course sc on s.id = sc.student.id and sc.status = '1' " +
+                    "where (:name is null or s.name like %:name%)")
     Page<Object[]> searchStudent(
             @Param("name") String name,
             Pageable pageable);
 
-    @Query(value = "SELECT s.id, s.name, s.email, s.status, " +
+
+    @Query(value = "SELECT DISTINCT s.id, s.name, s.email, s.status, " +
             "c.id as courseId, c.title as courseTitle, c.description as courseDescription, c.status as courseStatus " +
             "FROM Student s " +
-            "LEFT JOIN Student_Course sc ON s.id = sc.student_id and sc.status like 1 " +
+            "LEFT JOIN Student_Course sc ON s.id = sc.student_id AND sc.status = '1' " +
             "LEFT JOIN Course c ON sc.course_id = c.id " +
             "WHERE :name IS NULL OR s.name LIKE %:name% " +
             "ORDER BY s.id",
-            countQuery = "SELECT COUNT(DISTINCT s.id) " +
-                    "FROM Student s " +
-                    "LEFT JOIN Student_Course sc ON s.id = sc.student_id and sc.status like 1 " +
-                    "LEFT JOIN Course c ON sc.course_id = c.id " +
-                    "WHERE :name IS NULL OR s.name LIKE %:name%",
+            countQuery = "select count(distinct s.id) " +
+                    "from Student s " +
+                    "LEFT JOIN Student_Course sc ON s.id = sc.student_id AND sc.status = '1' " +
+                    "WHERE :name IS NULL OR s.name LIKE %:name% ",
             nativeQuery = true)
     Page<Object[]> searchByStudentCourses(
             @Param("name") String name,
             Pageable pageable);
+
 
     @Query("select s, c from Student s " +
             "left join fetch s.student_courses sc " +

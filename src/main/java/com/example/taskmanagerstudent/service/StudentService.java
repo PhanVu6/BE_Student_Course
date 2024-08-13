@@ -45,11 +45,10 @@ public class StudentService {
     /**
      * GET
      */
-    public ApiResponse<Page<StudentDto>> searchStudentAndTitleCourse(String name, int number, int size) {
+    public ApiResponse<Page<StudentDto>> searchStudentAndTitleCourse(String name, Pageable pageable) {
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
         response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
-        Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> results = studentRepository.searchStudentAndTitleCourses(name, pageable);
 
         List<StudentDto> studentDtos = results.getContent()
@@ -72,11 +71,10 @@ public class StudentService {
     }
 
 
-    public ApiResponse<Page<StudentDto>> searchGetByNative(String nameStudent, int number, int size) {
+    public ApiResponse<Page<StudentDto>> searchGetByNative(String nameStudent, Pageable pageable) {
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
         response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
-        Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> searchList = studentRepository.searchByStudentCourses(nameStudent, pageable);
 
         Map<Long, StudentDto> studentMap = new HashMap<>();
