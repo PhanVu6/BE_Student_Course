@@ -14,14 +14,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             "from Student s " +
             "left join fetch s.student_courses sc " +
             "left join fetch sc.course c " +
-            "where :name is null or s.name like %:name% " +
-            "order by s.id ",
+            "where (:name is null or s.name like %:name%) " +
+            "and sc.status = '1'" +
+            "order by s.id",
             countQuery = "select count(distinct s) " +
                     "from Student s " +
-                    "left join s.student_courses sc " +
-                    "left join sc.course c " +
-                    "where :name is null or s.name like %:name% " +
-                    "order by s.id ")
+                    "left join s.student_courses sc on sc.status = '1' " +
+                    "where (:name is null or s.name like %:name%)")
     Page<Object[]> searchStudent(
             @Param("name") String name,
             Pageable pageable);
@@ -29,7 +28,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query(value = "SELECT s.id, s.name, s.email, s.status, " +
             "c.id as courseId, c.title as courseTitle, c.description as courseDescription, c.status as courseStatus " +
             "FROM Student s " +
-            "LEFT JOIN Student_Course sc ON s.id = sc.student_id " +
+            "LEFT JOIN Student_Course sc ON s.id = sc.student_id and sc.status like 1 " +
             "LEFT JOIN Course c ON sc.course_id = c.id " +
             "WHERE :name IS NULL OR s.name LIKE %:name% " +
             "ORDER BY s.id",
@@ -46,12 +45,12 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("select s, c from Student s " +
             "left join fetch s.student_courses sc " +
             "left join fetch sc.course c " +
-            "where s.id = :id")
+            "where s.id = :id and sc.status = '1' ")
     List<Object[]> getStudentById(@Param("id") Long id);
 
 
     @Query(value = "SELECT s.*, c.* FROM student s " +
-            "LEFT JOIN student_course sc ON s.id = sc.student_id " +
+            "LEFT JOIN student_course sc ON s.id = sc.student_id and sc.status = '1' " +
             "LEFT JOIN course c ON sc.course_id = c.id " +
             "WHERE s.id = :id",
             nativeQuery = true)

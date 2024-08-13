@@ -104,24 +104,17 @@ public class StudentService {
                 studentMap.put(studentId, studentDto);
             }
 
-
             if (courseId != null) {
-                Student_Course studentCourse = studentCourseRepository
-                        .findByStudentAndCourse(studentId, courseId)
-                        .orElseThrow(() -> new AppException(ErrorCode.STUDENT_EXISTS_COURSE));
-
-                if (studentCourse.getStatus().equals("1")) {
-                    CourseDto courseDto = CourseDto.builder()
-                            .id(courseId)
-                            .title(courseTitle)
-                            .description(courseDescription)
-                            .status(courseStatus)
-                            .build();
-                    studentDto.getCourseDtos().add(courseDto);
-                }
+                CourseDto courseDto = CourseDto.builder()
+                        .id(courseId)
+                        .title(courseTitle)
+                        .description(courseDescription)
+                        .status(courseStatus)
+                        .build();
+                studentDto.getCourseDtos().add(courseDto);
             }
         }
-
+        
         List<StudentDto> result = new ArrayList<>(studentMap.values());
         Page<StudentDto> results = new PageImpl<>(result, pageable, searchList.getTotalElements());
 
@@ -134,35 +127,10 @@ public class StudentService {
 
     public ApiResponse<Page<StudentDto>> searchGetByJPQL(String nameStudent, int number, int size) {
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
-        response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
+        response.setMessage(messageSource.getMessage("error.operation", null, locale));
 
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> resultsSearch = studentRepository.searchStudent(nameStudent, pageable);
-
-        // Collect all the student IDs and course IDs from the results
-        Set<Long> studentIds = new HashSet<>();
-        Set<Long> courseIds = new HashSet<>();
-
-        for (Object[] result : resultsSearch.getContent()) {
-            Student student = (Student) result[0];
-            Course course = (Course) result[1];
-
-            studentIds.add(student.getId());
-            if (course != null) {
-                courseIds.add(course.getId());
-            }
-        }
-
-        // Fetch all the relevant Student_Course entities in one query
-        List<Student_Course> studentCourses = studentCourseRepository
-                .findByStudentIdInAndCourseIdIn(studentIds, courseIds);
-
-        // Map the Student_Course entities by student and course ID
-        Map<Long, Map<Long, Student_Course>> studentCourseMap = studentCourses.stream()
-                .collect(Collectors.groupingBy(
-                        sc -> sc.getStudent().getId(),
-                        Collectors.toMap(sc -> sc.getCourse().getId(), sc -> sc)
-                ));
 
         Map<Long, StudentDto> studentDtoMap = new HashMap<>();
 
@@ -184,18 +152,13 @@ public class StudentService {
             }
 
             if (course != null) {
-                Student_Course studentCourse = studentCourseMap.getOrDefault(student.getId(), Collections.emptyMap())
-                        .get(course.getId());
-
-                if (studentCourse != null && "1".equals(studentCourse.getStatus())) {
-                    CourseDto courseDto = CourseDto.builder()
-                            .id(course.getId())
-                            .title(course.getTitle())
-                            .description(course.getDescription())
-                            .status(course.getStatus())
-                            .build();
-                    studentDto.getCourseDtos().add(courseDto);
-                }
+                CourseDto courseDto = CourseDto.builder()
+                        .id(course.getId())
+                        .title(course.getTitle())
+                        .description(course.getDescription())
+                        .status(course.getStatus())
+                        .build();
+                studentDto.getCourseDtos().add(courseDto);
             }
         }
 
@@ -203,7 +166,7 @@ public class StudentService {
 
         Page<StudentDto> results = new PageImpl<>(studentDtos, pageable, resultsSearch.getTotalElements());
         response.setResult(results);
-        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
+        response.setMessage(messageSource.getMessage("success.operation", null, locale));
 
         return response;
     }
@@ -219,18 +182,7 @@ public class StudentService {
         Student student = (Student) results.get(0)[0];
 
         List<Course> courses = results.stream()
-                .map(result -> {
-                    Course course = (Course) result[1];
-                    Student_Course studentCourse = studentCourseRepository
-                            .findByStudentAndCourse(studentId, course.getId())
-                            .orElseThrow(() -> new AppException(ErrorCode.STUDENT_EXISTS_COURSE));
-
-                    if (studentCourse.getStatus().equals("1")) {
-                        return course;
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
+                .map(result -> (Course) result[1])
                 .distinct()
                 .collect(Collectors.toList());
 
@@ -250,7 +202,6 @@ public class StudentService {
             throw new AppException(ErrorCode.STUDENT_NOT_FOUND);
         }
 
-        // Map student
         Long id = (Long) results.get(0)[0];
         String studentName = (String) results.get(0)[1];
         String email = (String) results.get(0)[2];
@@ -262,7 +213,6 @@ public class StudentService {
         studentDto.setEmail(email);
         studentDto.setStatus(status);
 
-        // Map course
         List<CourseDto> courseDtos = results.stream()
                 .map(result -> {
                     Long courseId = (Long) result[4];
@@ -271,19 +221,12 @@ public class StudentService {
                     String courseStatus = (String) result[7];  // Lấy đúng cột cho courseStatus
 
                     if (courseId != null) {
-                        // Kiểm tra trạng thái của khóa học trong bảng trung gian
-                        Student_Course studentCourse = studentCourseRepository
-                                .findByStudentAndCourse(studentId, courseId)
-                                .orElse(null);
-
-                        if (studentCourse == null || studentCourse.getStatus().equals("1")) {
-                            CourseDto courseDto = new CourseDto();
-                            courseDto.setId(courseId);
-                            courseDto.setTitle(courseTitle);
-                            courseDto.setDescription(courseDescription);
-                            courseDto.setStatus(courseStatus);
-                            return courseDto;
-                        }
+                        CourseDto courseDto = new CourseDto();
+                        courseDto.setId(courseId);
+                        courseDto.setTitle(courseTitle);
+                        courseDto.setDescription(courseDescription);
+                        courseDto.setStatus(courseStatus);
+                        return courseDto;
                     }
                     return null;
                 })
