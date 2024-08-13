@@ -14,11 +14,11 @@ import com.example.taskmanagerstudent.mapper.StudentMapper;
 import com.example.taskmanagerstudent.repository.CourseRepository;
 import com.example.taskmanagerstudent.repository.StudentCourseRepository;
 import com.example.taskmanagerstudent.repository.StudentRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudentService {
     private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
@@ -41,11 +41,14 @@ public class StudentService {
 
     private StudentMapper studentMapper = StudentMapper.INSTANCE;
     private CourseMapper courseMapper = CourseMapper.INSTANCE;
+    private Locale locale = LocaleContextHolder.getLocale();
 
     /**
      * GET
      */
     public ApiResponse<Page<StudentDto>> searchStudentAndTitleCourse(String name, int number, int size) {
+
+
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> results = studentRepository.searchStudentAndTitleCourse(name, pageable);
 
@@ -65,13 +68,12 @@ public class StudentService {
 
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
         response.setResult(result);
-        response.setMessage("Thành công");
+        response.setMessage(messageSource.getMessage("success.operation", null, locale));
         return response;
     }
 
 
     public ApiResponse<Page<StudentDto>> searchGetByNative(String nameStudent, int number, int size, Locale locale) {
-
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> searchList = studentRepository.searchByStudentCourses(nameStudent, pageable);
 
@@ -122,8 +124,7 @@ public class StudentService {
 
         ApiResponse<Page<StudentDto>> response = new ApiResponse<>();
         response.setResult(results);
-        response.setMessage(result != null ? "Lấy thành công các student"
-                : messageSource.getMessage("success.get.all", null, locale));
+        response.setMessage(messageSource.getMessage("success.operation", null, locale));
 
         return response;
     }
@@ -139,7 +140,6 @@ public class StudentService {
             Student student = (Student) result[0];
             Course course = (Course) result[1];
 
-            // Kiểm tra xem StudentDto đã được tạo hay chưa
             StudentDto studentDto = studentDtoMap.get(student.getId());
 
             if (studentDto == null) {
@@ -153,7 +153,6 @@ public class StudentService {
                 studentDtoMap.put(student.getId(), studentDto);
             }
 
-            //Nếu course không null, tạo CourseDto và thêm vào danh sách courseDtos của StudentDto
             if (course != null) {
                 Student_Course studentCourse = studentCourseRepository
                         .findByStudentAndCourse(student.getId(), course.getId())
@@ -180,7 +179,7 @@ public class StudentService {
         List<Object[]> results = studentRepository.getStudentById(studentId);
 
         if (results.isEmpty()) {
-            throw new EntityNotFoundException("Student không tìm thấy với id = " + studentId);
+            throw new AppException(ErrorCode.STUDENT_NOT_FOUND);
         }
 
         Student student = (Student) results.get(0)[0];
@@ -206,7 +205,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> apiResponse = new ApiResponse<>();
         apiResponse.setResult(result);
-        apiResponse.setMessage(result != null ? "Thành công lấy student" : "Thất bại lấy student");
+        apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
         return apiResponse;
     }
 
@@ -214,7 +213,7 @@ public class StudentService {
         List<Object[]> results = studentRepository.getStudentAndCourses(studentId);
 
         if (results.isEmpty()) {
-            throw new EntityNotFoundException("Student không tìm thấy với id = " + studentId);
+            throw new AppException(ErrorCode.STUDENT_NOT_FOUND);
         }
 
         // Map student
@@ -261,7 +260,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> apiResponse = new ApiResponse<>();
         apiResponse.setResult(studentDto);
-        apiResponse.setMessage("Thành công lấy student");
+        apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
 
         return apiResponse;
     }
@@ -280,13 +279,24 @@ public class StudentService {
         student.setStatus(inpUpdate.getStatus());
         studentRepository.save(student);
 
-        List<Student_Course> existingStudentCourses = studentCourseRepository.findByStudentId(student.getId());
+        // Tạo trực tiếp khóa học mới
+        List<Course> courses = courseMapper.COURSES_LIST(inpUpdate.getNewCourses());
+        courses = courseRepository.saveAll(courses);
+        // Lấy ra id các khóa học mới
+        Set<Long> newCreatedCourseIds = courses.stream()
+                .map(Course::getId)
+                .collect(Collectors.toSet());
 
+        // Lấy ra StudentCourse, nghĩa là lấy ra các quan hệ Student và course
+        List<Student_Course> existingStudentCourses = studentCourseRepository.findByStudentId(student.getId());
         Map<Long, Student_Course> studentCourseMap = existingStudentCourses.stream()
                 .collect(Collectors.toMap(sc -> sc.getCourse().getId(), sc -> sc));
 
+        // Thêm các Course id update và mới create
         Set<Long> newCourseIds = new HashSet<>(inpUpdate.getCourseIds());
+        newCourseIds.addAll(newCreatedCourseIds);
 
+        // Lấy ra các id có trong student course, nhưng không có trong update để hủy Course
         Set<Long> idToCloseCourses = studentCourseMap.keySet().stream()
                 .filter(id -> !newCourseIds.contains(id))
                 .collect(Collectors.toSet());
@@ -295,7 +305,8 @@ public class StudentService {
             studentCourseRepository.changeStatusByStudentIdAndCourseIds(student.getId(), idToCloseCourses, "0");
         }
 
-        List<Course> courses = courseRepository.findAllById(inpUpdate.getCourseIds());
+        // Lấy tất cả Course id để cập nhập trong StudentCourse
+        courses = courseRepository.findAllById(newCourseIds);
 
         Set<Student_Course> newStudentCourses = courses.stream()
                 .map(course -> {
@@ -310,6 +321,7 @@ public class StudentService {
                 })
                 .collect(Collectors.toSet());
 
+
         studentCourseRepository.saveAll(newStudentCourses);
 
         StudentDto result = studentMapper.toDto(student);
@@ -317,7 +329,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> response = new ApiResponse<>();
         response.setResult(result);
-        response.setMessage("Cập nhật sinh viên thành công");
+        response.setMessage(messageSource.getMessage("success.update", null, locale));
         return response;
     }
 
@@ -369,7 +381,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> response = new ApiResponse<>();
         response.setResult(resultDto);
-        response.setMessage("Tạo sinh viên và khóa học thành công");
+        response.setMessage(messageSource.getMessage("success.create", null, locale));
 
         return response;
     }
@@ -380,8 +392,15 @@ public class StudentService {
      */
     public ApiResponse<Boolean> deleteTempStudent(Long studentId, String status) {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+
         apiResponse.setResult(false);
-        apiResponse.setMessage("Chuyển đổi status thất bại");
+        apiResponse.setMessage(messageSource.getMessage("error.operation", null, locale));
+
+        if (!studentRepository.existsById(studentId)) {
+            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, locale));
+            apiResponse.setResult(false);
+            return apiResponse;
+        }
 
         try {
             Student student = studentRepository.findById(studentId)
@@ -390,7 +409,7 @@ public class StudentService {
             student.setStatus(status);
             student = studentRepository.save(student);
             apiResponse.setResult(true);
-            apiResponse.setMessage("Chuyển đổi status thành công");
+            apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
             return apiResponse;
         } catch (Exception e) {
             e.printStackTrace();
@@ -402,14 +421,14 @@ public class StudentService {
     public ApiResponse<Boolean> delete(Long id) {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
         if (!studentRepository.existsById(id)) {
-            apiResponse.setMessage("ID student không tồn tại");
+            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, locale));
             apiResponse.setResult(false);
             return apiResponse;
         }
 
         studentRepository.deleteById(id);
 
-        apiResponse.setMessage("Student đã xóa");
+        apiResponse.setMessage(messageSource.getMessage("success.operation", null, locale));
         apiResponse.setResult(true);
         return apiResponse;
     }
