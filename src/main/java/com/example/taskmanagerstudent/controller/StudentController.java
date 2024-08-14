@@ -7,6 +7,8 @@ import com.example.taskmanagerstudent.repository.StudentRepository;
 import com.example.taskmanagerstudent.service.StudentService;
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,7 +31,9 @@ public class StudentController {
      */
     @GetMapping("aaa")
     public Page<Object[]> search(@RequestParam(value = "name", required = false) String nameStudent,
+                                 @Min(0)
                                  @RequestParam(value = "number", required = false, defaultValue = "0") int number,
+                                 @Min(0)
                                  @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(number, size);
         Page<Object[]> result = studentRepository.searchStudent(nameStudent, pageable);
@@ -39,7 +43,8 @@ public class StudentController {
     @GetMapping("search")
     public ApiResponse<Page<StudentDto>> searchStudentAndTitles(@RequestParam(value = "name", required = false)
                                                                 @Nullable
-                                                                @Size(max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
+                                                                @Size(min = 2, max = 50, message = "error.invalidInput")
+                                                                String nameStudent,
                                                                 @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(number, size);
@@ -50,7 +55,8 @@ public class StudentController {
     @GetMapping("search-native")
     public ApiResponse<Page<StudentDto>> searchGetByNative(@RequestParam(value = "name", required = false)
                                                            @Nullable
-                                                           @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
+                                                           @Size(min = 2, max = 50, message = "error.invalidInput")
+                                                           String nameStudent,
                                                            @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
 
@@ -62,7 +68,8 @@ public class StudentController {
     @GetMapping("search-jpql")
     public ApiResponse<Page<StudentDto>> searchGetByJPQL(@RequestParam(value = "name", required = false)
                                                          @Nullable
-                                                         @Size(min = 2, max = 50, message = "Tên không thể nằm ngoài khoảng [3,50] từ") String nameStudent,
+                                                         @Size(min = 2, max = 50, message = "error.invalidInput")
+                                                         String nameStudent,
                                                          @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                          @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         ApiResponse<Page<StudentDto>> result = studentService.searchGetByJPQL(nameStudent, number, size);
@@ -89,7 +96,9 @@ public class StudentController {
 
     @PutMapping("delete-temp/{studentId}")
     public ApiResponse<Boolean> deleteTempStudent(@PathVariable("studentId") Long studentId,
-                                                  @RequestParam("status") String status) {
+                                                  @RequestParam("status")
+                                                  @Pattern(regexp = "0|1", message = "error.statusInput")
+                                                  String status) {
         return studentService.deleteTempStudent(studentId, status);
     }
 
