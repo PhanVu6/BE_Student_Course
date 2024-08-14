@@ -68,7 +68,7 @@ public class StudentService {
         response.setResult(result);
         response.setMessage(results.getTotalElements() != 0 ?
                 messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale())
-                : messageSource.getMessage("sucess.get.not.found", null, LocaleContextHolder.getLocale()));
+                : messageSource.getMessage("error.get.not.found", null, LocaleContextHolder.getLocale()));
         return response;
     }
 
@@ -120,7 +120,7 @@ public class StudentService {
         response.setResult(results);
         response.setMessage(results.getTotalElements() != 0 ?
                 messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale())
-                : messageSource.getMessage("sucess.get.not.found", null, LocaleContextHolder.getLocale()));
+                : messageSource.getMessage("error.get.not.found", null, LocaleContextHolder.getLocale()));
 
         return response;
     }
@@ -169,13 +169,17 @@ public class StudentService {
         response.setResult(results);
         response.setMessage(results.getTotalElements() != 0 ?
                 messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale())
-                : messageSource.getMessage("sucess.get.not.found", null, LocaleContextHolder.getLocale()));
+                : messageSource.getMessage("error.get.not.found", null, LocaleContextHolder.getLocale()));
 
         return response;
     }
 
 
     public ApiResponse<StudentDto> getOneJpql(Long studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new AppException(ErrorCode.STUDENT_NOT_FOUND);
+        }
+
         List<Object[]> results = studentRepository.getStudentById(studentId);
 
         if (results.isEmpty()) {
@@ -199,6 +203,10 @@ public class StudentService {
     }
 
     public ApiResponse<StudentDto> getOneNative(Long studentId) {
+        if (!studentRepository.existsById(studentId)) {
+            throw new AppException(ErrorCode.STUDENT_NOT_FOUND);
+        }
+
         List<Object[]> results = studentRepository.getStudentAndCourses(studentId);
 
         if (results.isEmpty()) {
@@ -372,14 +380,11 @@ public class StudentService {
      */
     public ApiResponse<Boolean> deleteTempStudent(Long studentId, String status) {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
-
         apiResponse.setResult(false);
         apiResponse.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
         if (!studentRepository.existsById(studentId)) {
-            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, LocaleContextHolder.getLocale()));
-            apiResponse.setResult(false);
-            return apiResponse;
+            throw new AppException(ErrorCode.STUDENT_NOT_FOUND);
         }
 
         try {
@@ -400,10 +405,12 @@ public class StudentService {
     @Transactional
     public ApiResponse<Boolean> delete(Long id) {
         ApiResponse<Boolean> apiResponse = new ApiResponse<>();
+        apiResponse.setResult(false);
+        apiResponse.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
+
+
         if (!studentRepository.existsById(id)) {
-            apiResponse.setMessage(messageSource.getMessage("error.notFound", null, LocaleContextHolder.getLocale()));
-            apiResponse.setResult(false);
-            return apiResponse;
+            throw new AppException(ErrorCode.STUDENT_NOT_FOUND);
         }
 
         studentRepository.deleteById(id);

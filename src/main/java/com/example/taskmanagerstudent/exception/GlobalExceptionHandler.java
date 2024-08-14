@@ -31,13 +31,13 @@ public class GlobalExceptionHandler {
 
         ApiResponse<String> apiResponse = new ApiResponse<>();
         apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(messageSource.getMessage(errorCode.name(), null, locale));
+        apiResponse.setMessage(messageSource.getMessage(errorCode.getMessage(), null, locale));
         apiResponse.setResult(exception.getMessage());
 
         return ResponseEntity.status(errorCode.getStatus()).body(apiResponse);
     }
 
-    // Xử lý MethodArgumentNotValidException
+    // Xử lý MethodArgumentNotValidException bắt trường lỗi
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(MethodArgumentNotValidException exception) {
         Locale locale = LocaleContextHolder.getLocale();
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
     }
 
-    // Xử lý HttpMessageNotReadableException
+    // Xử lý HttpMessageNotReadableException bắt lỗi format json
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse<String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
         Locale locale = LocaleContextHolder.getLocale();
@@ -85,6 +85,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    // Bắt lỗi ràng bộng đối số truyền vào trên phương thức
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleConstraintViolationException(
             ConstraintViolationException exception) {

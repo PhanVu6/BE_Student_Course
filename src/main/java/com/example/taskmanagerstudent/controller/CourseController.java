@@ -1,14 +1,12 @@
 package com.example.taskmanagerstudent.controller;
 
 import com.example.taskmanagerstudent.dto.request.CourseDto;
-import com.example.taskmanagerstudent.dto.request.StudentDto;
 import com.example.taskmanagerstudent.dto.response.ApiResponse;
 import com.example.taskmanagerstudent.service.CourseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "course")
@@ -18,8 +16,9 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping
-    public ApiResponse<List<CourseDto>> getAll() {
-        return courseService.getAll();
+    public ApiResponse<Page<CourseDto>> getAll(@RequestParam(value = "number", required = false, defaultValue = "0") int number,
+                                               @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+        return courseService.getAll(number, size);
     }
 
     @GetMapping("get-course/{id}")
@@ -32,9 +31,10 @@ public class CourseController {
         return courseService.update(courseDto, id);
     }
 
-    @PutMapping("update-to-student/{id}")
-    public ApiResponse<CourseDto> updateCoursesByStudent(@RequestBody @Valid StudentDto studentDto, @PathVariable("id") Long courseId) {
-        return courseService.updateStudentsByCourse(studentDto, courseId);
+    @PutMapping("update-status/{id}")
+    public ApiResponse<Boolean> updateCoursesByStudent(@RequestParam(value = "status", required = false, defaultValue = "1") String status,
+                                                       @PathVariable("id") Long courseId) {
+        return courseService.deleteTempCourse(courseId, status);
     }
 
     @PostMapping

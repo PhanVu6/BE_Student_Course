@@ -3,7 +3,6 @@ package com.example.taskmanagerstudent.mapper;
 import com.example.taskmanagerstudent.dto.request.CourseDto;
 import com.example.taskmanagerstudent.entity.Course;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
@@ -16,7 +15,6 @@ public interface CourseMapper {
 
     Course toEntity(CourseDto courseDto);
 
-    @Mapping(target = "studentDtos", ignore = true)
     CourseDto toDto(Course course);
 
     List<Course> COURSES_LIST(List<CourseDto> courseList);

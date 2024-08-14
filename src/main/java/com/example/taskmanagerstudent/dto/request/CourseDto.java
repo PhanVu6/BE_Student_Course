@@ -3,13 +3,11 @@ package com.example.taskmanagerstudent.dto.request;
 import com.example.taskmanagerstudent.entity.Course;
 import com.example.taskmanagerstudent.repository.common.ExistsInDatabase;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -28,8 +26,9 @@ public class CourseDto {
     @Size(max = 50, min = 2, message = "error.invalidInput")
     private String description;
 
+    @NotNull(message = "error.notBlank")
     @Pattern(regexp = "0|1", message = "error.statusInput")
     private String status;
 
-    private List<@Valid StudentDto> studentDtos;
+//    private List<@Valid StudentDto> studentDtos;
 }
