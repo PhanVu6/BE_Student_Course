@@ -66,7 +66,9 @@ public class StudentService {
         Page<StudentDto> result = new PageImpl<>(studentDtos, pageable, results.getTotalElements());
 
         response.setResult(result);
-        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
+        response.setMessage(results.getTotalElements() != 0 ?
+                messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale())
+                : messageSource.getMessage("sucess.get.not.found", null, LocaleContextHolder.getLocale()));
         return response;
     }
 
@@ -116,7 +118,9 @@ public class StudentService {
         Page<StudentDto> results = new PageImpl<>(result, pageable, searchList.getTotalElements());
 
         response.setResult(results);
-        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
+        response.setMessage(results.getTotalElements() != 0 ?
+                messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale())
+                : messageSource.getMessage("sucess.get.not.found", null, LocaleContextHolder.getLocale()));
 
         return response;
     }
@@ -163,7 +167,9 @@ public class StudentService {
 
         Page<StudentDto> results = new PageImpl<>(studentDtos, pageable, resultsSearch.getTotalElements());
         response.setResult(results);
-        response.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
+        response.setMessage(results.getTotalElements() != 0 ?
+                messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale())
+                : messageSource.getMessage("sucess.get.not.found", null, LocaleContextHolder.getLocale()));
 
         return response;
     }
@@ -188,7 +194,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> apiResponse = new ApiResponse<>();
         apiResponse.setResult(result);
-        apiResponse.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
+        apiResponse.setMessage(messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale()));
         return apiResponse;
     }
 
@@ -234,7 +240,7 @@ public class StudentService {
 
         ApiResponse<StudentDto> apiResponse = new ApiResponse<>();
         apiResponse.setResult(studentDto);
-        apiResponse.setMessage(messageSource.getMessage("success.operation", null, LocaleContextHolder.getLocale()));
+        apiResponse.setMessage(messageSource.getMessage("success.get.all", null, LocaleContextHolder.getLocale()));
 
         return apiResponse;
     }
