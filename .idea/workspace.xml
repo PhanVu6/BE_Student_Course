@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9b5ca2b1-79e7-4cae-997a-fb9833678077" name="Changes" comment="Save changes before removing files">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -65,7 +66,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "Merging master",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/Temp/BE",
     "node.js.detected.package.eslint": "true",
@@ -159,7 +160,7 @@
       <workItem from="1723649158590" duration="7988000" />
       <workItem from="1723659003023" duration="335000" />
       <workItem from="1723659363973" duration="1257000" />
-      <workItem from="1723690259097" duration="1263000" />
+      <workItem from="1723690259097" duration="1969000" />
     </task>
     <task id="LOCAL-00001" summary="Save changes before removing files">
       <option name="closed" value="true" />
