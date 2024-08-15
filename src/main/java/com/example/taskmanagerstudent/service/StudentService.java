@@ -6,7 +6,11 @@ import com.example.taskmanagerstudent.dto.request.UpdateStudentCourseDto;
 import com.example.taskmanagerstudent.dto.response.ApiResponse;
 import com.example.taskmanagerstudent.entity.Course;
 import com.example.taskmanagerstudent.entity.Student;
+<<<<<<< HEAD
 import com.example.taskmanagerstudent.entity.Student_Course;
+=======
+import com.example.taskmanagerstudent.entity.StudentCourse;
+>>>>>>> store-temp
 import com.example.taskmanagerstudent.exception.AppException;
 import com.example.taskmanagerstudent.exception.ErrorCode;
 import com.example.taskmanagerstudent.mapper.CourseMapper;
@@ -131,6 +135,7 @@ public class StudentService {
         response.setMessage(messageSource.getMessage("error.operation", null, LocaleContextHolder.getLocale()));
 
         Pageable pageable = PageRequest.of(number, size);
+<<<<<<< HEAD
         Page<Object[]> resultsSearch = studentRepository.searchStudent(nameStudent, pageable);
 
         Map<Long, StudentDto> studentDtoMap = new HashMap<>();
@@ -165,6 +170,26 @@ public class StudentService {
 
         List<StudentDto> studentDtos = new ArrayList<>(studentDtoMap.values());
 
+=======
+        Page<Student> resultsSearch = studentRepository.searchStudent(nameStudent, pageable);
+        List<Student> students = resultsSearch.getContent();
+
+        Map<Long, StudentDto> storeStudentDto = students.stream().collect(Collectors.toMap(
+                student -> student.getId(),
+                student -> studentMapper.toDto(student)
+        ));
+
+        for (Student student : students) {
+            List<Course> courses = student.getStudentCourse()
+                    .stream().map(studentCourse -> studentCourse.getCourse())
+                    .collect(Collectors.toList());
+
+            storeStudentDto.get(student.getId()).setCourseDtos(courseMapper.DTO_LIST(courses));
+        }
+
+
+        List<StudentDto> studentDtos = new ArrayList<>(storeStudentDto.values());
+>>>>>>> store-temp
         Page<StudentDto> results = new PageImpl<>(studentDtos, pageable, resultsSearch.getTotalElements());
         response.setResult(results);
         response.setMessage(results.getTotalElements() != 0 ?
@@ -276,8 +301,13 @@ public class StudentService {
                 .collect(Collectors.toSet());
 
         // Lấy ra StudentCourse, nghĩa là lấy ra các quan hệ Student và course
+<<<<<<< HEAD
         List<Student_Course> existingStudentCourses = studentCourseRepository.findByStudentId(student.getId());
         Map<Long, Student_Course> studentCourseMap = existingStudentCourses.stream()
+=======
+        List<StudentCourse> existingStudentCourses = studentCourseRepository.findByStudentId(student.getId());
+        Map<Long, StudentCourse> studentCourseMap = existingStudentCourses.stream()
+>>>>>>> store-temp
                 .collect(Collectors.toMap(sc -> sc.getCourse().getId(), sc -> sc));
 
         // Thêm các Course id update và mới create
@@ -296,11 +326,19 @@ public class StudentService {
         // Lấy tất cả Course id để cập nhập trong StudentCourse
         courses = courseRepository.findAllById(newCourseIds);
 
+<<<<<<< HEAD
         Set<Student_Course> newStudentCourses = courses.stream()
                 .map(course -> {
                     Student_Course studentCourse = studentCourseMap.get(course.getId());
                     if (studentCourse == null) {
                         studentCourse = new Student_Course();
+=======
+        Set<StudentCourse> newStudentCourses = courses.stream()
+                .map(course -> {
+                    StudentCourse studentCourse = studentCourseMap.get(course.getId());
+                    if (studentCourse == null) {
+                        studentCourse = new StudentCourse();
+>>>>>>> store-temp
                     }
                     studentCourse.setStudent(student);
                     studentCourse.setCourse(course);
@@ -333,8 +371,14 @@ public class StudentService {
         student.setStatus(studentDto.getStatus());
         student = studentRepository.save(student);
 
+<<<<<<< HEAD
         Set<Student_Course> studentCourses = new HashSet<>();
 
+=======
+        Set<StudentCourse> studentCourses = new HashSet<>();
+
+        List<Course> courseList = new ArrayList<>();
+>>>>>>> store-temp
         for (CourseDto courseDto : studentDto.getCourseDtos()) {
             Long courseId = courseDto.getId();
 
@@ -345,7 +389,11 @@ public class StudentService {
                 course.setTitle(courseDto.getTitle());
                 course.setDescription(courseDto.getDescription());
                 course.setStatus(courseDto.getStatus());
+<<<<<<< HEAD
                 course = courseRepository.save(course);
+=======
+                courseList.add(course);
+>>>>>>> store-temp
 
                 courseDto.setId(course.getId());
             } else {
@@ -354,14 +402,25 @@ public class StudentService {
 
                 course.setTitle(courseDto.getTitle());
                 course.setDescription(courseDto.getDescription());
+<<<<<<< HEAD
                 courseRepository.save(course);
             }
             Student_Course studentCourse = new Student_Course();
+=======
+                courseList.add(course);
+            }
+            StudentCourse studentCourse = new StudentCourse();
+>>>>>>> store-temp
             studentCourse.setStudent(student);
             studentCourse.setCourse(course);
             studentCourse.setStatus(courseDto.getStatus());
             studentCourses.add(studentCourse);
         }
+<<<<<<< HEAD
+=======
+
+        courseRepository.saveAll(courseList);
+>>>>>>> store-temp
         studentCourseRepository.saveAll(studentCourses);
 
         StudentDto resultDto = studentMapper.toDto(student);

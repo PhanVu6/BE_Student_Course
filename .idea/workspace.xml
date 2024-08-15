@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9b5ca2b1-79e7-4cae-997a-fb9833678077" name="Changes" comment="Save changes before removing files">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="HTML File" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+  </component>
+  <component name="HierarchyBrowserManager">
+    <option name="SORT_ALPHABETICALLY" value="true" />
+  </component>
+  <component name="JpbToolWindowState">
+    <option name="isToolWindowVisible" value="false" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2kDv8EBRhSSs3xG0jOfCdJOzVOY" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "Merging master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/Temp/BE",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "database.query.execution",
+    "spring.configuration.checksum": "9a19477c30db7378c384b707f7e2f28c",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.example.taskmanagerstudent.exception" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Temp\BE\src\main\resources\templates" />
+      <recent name="D:\Temp\BE\src\main\resources" />
+      <recent name="D:\LearnNodo\springboot\TaskManagerStudent\src\main\java\com\example\taskmanagerstudent\dto\request" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.taskmanagerstudent.repository" />
+      <recent name="com.example.taskmanagerstudent.entity" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="TaskManagerStudentApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="TaskManagerStudent" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.taskmanagerstudent.TaskManagerStudentApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9b5ca2b1-79e7-4cae-997a-fb9833678077" name="Changes" comment="" />
+      <created>1722830801339</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1722830801339</updated>
+      <workItem from="1722830802331" duration="3375000" />
+      <workItem from="1722839466626" duration="12688000" />
+      <workItem from="1722900012240" duration="1000" />
+      <workItem from="1722901599842" duration="2299000" />
+      <workItem from="1722909869870" duration="10370000" />
+      <workItem from="1722925951977" duration="8326000" />
+      <workItem from="1722935435229" duration="5449000" />
+      <workItem from="1722953551181" duration="6667000" />
+      <workItem from="1722960749817" duration="5675000" />
+      <workItem from="1722996368145" duration="9282000" />
+      <workItem from="1723012281188" duration="4318000" />
+      <workItem from="1723017471188" duration="10375000" />
+      <workItem from="1723039465192" duration="14670000" />
+      <workItem from="1723085177200" duration="3858000" />
+      <workItem from="1723095560146" duration="15185000" />
+      <workItem from="1723125374612" duration="8651000" />
+      <workItem from="1723136261417" duration="5624000" />
+      <workItem from="1723169930123" duration="5415000" />
+      <workItem from="1723182861271" duration="427000" />
+      <workItem from="1723183621001" duration="9451000" />
+      <workItem from="1723196407689" duration="4028000" />
+      <workItem from="1723212053442" duration="594000" />
+      <workItem from="1723221026154" duration="1565000" />
+      <workItem from="1723255141870" duration="10897000" />
+      <workItem from="1723297389895" duration="14643000" />
+      <workItem from="1723341509413" duration="7849000" />
+      <workItem from="1723362811814" duration="3372000" />
+      <workItem from="1723373816078" duration="2312000" />
+      <workItem from="1723381658966" duration="14247000" />
+      <workItem from="1723428796861" duration="21892000" />
+      <workItem from="1723467533181" duration="17167000" />
+      <workItem from="1723517270188" duration="6927000" />
+      <workItem from="1723528109345" duration="20509000" />
+      <workItem from="1723556480300" duration="571000" />
+      <workItem from="1723557068296" duration="4542000" />
+      <workItem from="1723561647461" duration="40000" />
+      <workItem from="1723561703420" duration="2428000" />
+      <workItem from="1723566831973" duration="6318000" />
+      <workItem from="1723596734773" duration="673000" />
+      <workItem from="1723600601556" duration="12108000" />
+      <workItem from="1723613662810" duration="15340000" />
+      <workItem from="1723649158590" duration="7988000" />
+      <workItem from="1723659003023" duration="335000" />
+      <workItem from="1723659363973" duration="1257000" />
+      <workItem from="1723690259097" duration="1969000" />
+    </task>
+    <task id="LOCAL-00001" summary="Save changes before removing files">
+      <option name="closed" value="true" />
+      <created>1723660408907</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1723660408907</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Save changes before removing files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Save changes before removing files" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/taskmanagerstudent/service/StudentService.java</url>
+          <line>334</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/taskmanagerstudent/service/StudentService.java</url>
+          <line>133</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/example/taskmanagerstudent/service/StudentService.java</url>
+          <line>151</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="SpringBootApplicationConfigurationType">
+        <watch expression="resultsSearch" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

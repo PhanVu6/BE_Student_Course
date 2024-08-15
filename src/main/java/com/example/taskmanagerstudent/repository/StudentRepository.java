@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+<<<<<<< HEAD
 public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query(value = "SELECT s, c " +
             "from Student s " +
@@ -21,10 +22,18 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
                     "left join Student_Course sc on s.id = sc.student.id and sc.status = '1' " +
                     "where (:name is null or s.name like %:name%)")
     Page<Object[]> searchStudent(
+=======
+import static com.example.taskmanagerstudent.repository.common.StudentSQL.*;
+
+public interface StudentRepository extends JpaRepository<Student, Long> {
+    @Query(value = valueSearchStudent)
+    Page<Student> searchStudent(
+>>>>>>> store-temp
             @Param("name") String name,
             Pageable pageable);
 
 
+<<<<<<< HEAD
     @Query(value = "SELECT DISTINCT s.id, s.name, s.email, s.status, " +
             "c.id as courseId, c.title as courseTitle, c.description as courseDescription, c.status as courseStatus " +
             "FROM Student s " +
@@ -36,12 +45,17 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
                     "from Student s " +
                     "LEFT JOIN Student_Course sc ON s.id = sc.student_id AND sc.status = '1' " +
                     "WHERE :name IS NULL OR s.name LIKE %:name% ",
+=======
+    @Query(value = valueSearchByStudentCourses,
+            countQuery = countSearchByStudentCourses,
+>>>>>>> store-temp
             nativeQuery = true)
     Page<Object[]> searchByStudentCourses(
             @Param("name") String name,
             Pageable pageable);
 
 
+<<<<<<< HEAD
     @Query("select s, c from Student s " +
             "left join fetch s.student_courses sc " +
             "left join fetch sc.course c " +
@@ -68,6 +82,18 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
                     "LEFT JOIN student_course sc ON s.id = sc.student_id and sc.status LIKE 1 " +
                     "LEFT JOIN course c ON sc.course_id = c.id " +
                     "WHERE :name is null or s.name LIKE %:name%",
+=======
+    @Query(valueGetStudentById)
+    List<Object[]> getStudentById(@Param("id") Long id);
+
+
+    @Query(value = valueGetStudentAndCourses,
+            nativeQuery = true)
+    List<Object[]> getStudentAndCourses(@Param("id") Long id);
+
+    @Query(value = valueSearchStudentAndTitleCourses,
+            countQuery = countSearchStudentAndTitleCourses,
+>>>>>>> store-temp
             nativeQuery = true)
     Page<Object[]> searchStudentAndTitleCourses(@Param("name") String name, Pageable pageable);
 

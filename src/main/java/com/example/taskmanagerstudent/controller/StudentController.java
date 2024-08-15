@@ -7,7 +7,10 @@ import com.example.taskmanagerstudent.repository.StudentRepository;
 import com.example.taskmanagerstudent.service.StudentService;
 import io.micrometer.common.lang.Nullable;
 import jakarta.validation.Valid;
+<<<<<<< HEAD
 import jakarta.validation.constraints.Min;
+=======
+>>>>>>> store-temp
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ public class StudentController {
     /**
      * GET
      */
+<<<<<<< HEAD
     @GetMapping("aaa")
     public Page<Object[]> search(@RequestParam(value = "name", required = false) String nameStudent,
                                  @Min(0)
@@ -40,6 +44,8 @@ public class StudentController {
         return result;
     }
 
+=======
+>>>>>>> store-temp
     @GetMapping("search")
     public ApiResponse<Page<StudentDto>> searchStudentAndTitles(@RequestParam(value = "name", required = false)
                                                                 @Nullable

@@ -32,5 +32,9 @@ public class Student {
 
     @OneToMany(mappedBy = "student", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
     @JsonBackReference
+<<<<<<< HEAD
     private Set<Student_Course> student_courses;
+=======
+    private Set<StudentCourse> studentCourse;
+>>>>>>> store-temp
 }

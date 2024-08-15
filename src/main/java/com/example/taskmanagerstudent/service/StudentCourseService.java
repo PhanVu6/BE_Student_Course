@@ -6,7 +6,11 @@ import com.example.taskmanagerstudent.dto.request.Student_CourseDto;
 import com.example.taskmanagerstudent.dto.response.ApiResponse;
 import com.example.taskmanagerstudent.entity.Course;
 import com.example.taskmanagerstudent.entity.Student;
+<<<<<<< HEAD
 import com.example.taskmanagerstudent.entity.Student_Course;
+=======
+import com.example.taskmanagerstudent.entity.StudentCourse;
+>>>>>>> store-temp
 import com.example.taskmanagerstudent.mapper.CourseMapper;
 import com.example.taskmanagerstudent.mapper.StudentCourseMapper;
 import com.example.taskmanagerstudent.mapper.StudentMapper;
@@ -35,7 +39,11 @@ public class StudentCourseService {
 
     @Transactional
     public Student_CourseDto create(Student_CourseDto studentCourseDto) {
+<<<<<<< HEAD
         Student_Course result = studentCourseMapper.toEntity(studentCourseDto);
+=======
+        StudentCourse result = studentCourseMapper.toEntity(studentCourseDto);
+>>>>>>> store-temp
         result.setStatus("1");
         result = studentCourseRepository.save(result);
         return studentCourseMapper.toDto(result);
@@ -49,7 +57,11 @@ public class StudentCourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + courseId));
 
+<<<<<<< HEAD
         Student_Course result = new Student_Course();
+=======
+        StudentCourse result = new StudentCourse();
+>>>>>>> store-temp
         result.setStudent(student);
         result.setCourse(course);
         result.setStatus("1");
@@ -70,7 +82,11 @@ public class StudentCourseService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + courseId));
 
+<<<<<<< HEAD
         Student_Course result = new Student_Course();
+=======
+        StudentCourse result = new StudentCourse();
+>>>>>>> store-temp
         result.setStudent(student);
         result.setCourse(course);
         result.setStatus("1");
@@ -81,7 +97,11 @@ public class StudentCourseService {
     }
 
     public List<CourseDto> findByStudentId(Long studentId) {
+<<<<<<< HEAD
         List<Student_Course> studentCourseList = studentCourseRepository.findByStudentId(studentId);
+=======
+        List<StudentCourse> studentCourseList = studentCourseRepository.findByStudentId(studentId);
+>>>>>>> store-temp
         List<Course> courseList = studentCourseList.stream()
                 .map(contain -> {
                     if (contain.getStatus().equals("1")) {

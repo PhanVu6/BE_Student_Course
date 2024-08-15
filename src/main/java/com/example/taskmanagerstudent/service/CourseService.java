@@ -6,7 +6,10 @@ import com.example.taskmanagerstudent.entity.Course;
 import com.example.taskmanagerstudent.exception.AppException;
 import com.example.taskmanagerstudent.exception.ErrorCode;
 import com.example.taskmanagerstudent.mapper.CourseMapper;
+<<<<<<< HEAD
 import com.example.taskmanagerstudent.mapper.StudentMapper;
+=======
+>>>>>>> store-temp
 import com.example.taskmanagerstudent.repository.CourseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -28,7 +31,10 @@ public class CourseService {
 
     private final StudentCourseService studentCourseService;
     private CourseMapper courseMapper = CourseMapper.INSTANCE;
+<<<<<<< HEAD
     private StudentMapper studentMapper = StudentMapper.INSTANCE;
+=======
+>>>>>>> store-temp
 
     public ApiResponse<Page<CourseDto>> getAll(int number, int size) {
         Pageable pageable = PageRequest.of(number, size);
