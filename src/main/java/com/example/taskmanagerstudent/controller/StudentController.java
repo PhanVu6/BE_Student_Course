@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("student")
-//@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 @Validated
 public class StudentController {
@@ -30,8 +30,8 @@ public class StudentController {
      */
     @GetMapping("search")
     public ApiResponse<Page<StudentDto>> searchStudentAndTitles(@RequestParam(value = "name", required = false)
-                                                                @Nullable
-                                                                @Size(min = 2, max = 50, message = "error.invalidInput")
+//                                                                @Nullable
+//                                                                @Size(min = 2, max = 50, message = "error.invalidInput")
                                                                 String nameStudent,
                                                                 @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
