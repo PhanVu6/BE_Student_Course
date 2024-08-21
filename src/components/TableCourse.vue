@@ -3,7 +3,7 @@
     <nav>
       <section>
         <div class="flex gap-4 mb-4 items-center">
-          <el-input @input="getAllCourse()" v-model="paramNameForStudent" style="width: 340px" placeholder="Search"
+          <el-input @input="getAllCourse()" v-model="paramNameForCourse" style="width: 340px" placeholder="Search"
                     :suffix-icon="Search"
           />
         </div>
@@ -44,7 +44,7 @@
         </el-table-column>
       </el-table>
 
-      <div class="demo-pagination-block">
+      <div class="demo-pagination-block" style="margin-top: 20px">
         <div class="demonstration">Change page size</div>
         <el-pagination
             v-model:current-page="page.currentPage"
@@ -116,7 +116,7 @@ const students = ref([]);
 const loadingCreate = ref(false);
 const isFormEmail = ref(false);
 const isFormName = ref(false);
-const paramNameForStudent = ref('');
+const paramNameForCourse = ref('');
 const size = ref<ComponentSize>('default');
 const background = ref(true);
 const disabledPage = ref(false);
@@ -129,7 +129,7 @@ const formInline = reactive({
 
 const page = reactive({
   currentPage: 1,
-  pageSize: 5,
+  pageSize: 10,
   totalElement: 0,
 })
 const form = ref(null);
@@ -140,7 +140,7 @@ const getAllCourse = async () => {
     page.currentPage--;
 
     const params = new URLSearchParams({
-      name: paramNameForStudent.value,
+      title: paramNameForCourse.value,
       number: page.currentPage,
       size: page.pageSize,
     });

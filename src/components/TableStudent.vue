@@ -46,7 +46,7 @@
         </el-table-column>
       </el-table>
 
-      <div class="demo-pagination-block">
+      <div class="demo-pagination-block" style="margin-top: 20px">
         <div class="demonstration">Change page size</div>
         <el-pagination
             v-model:current-page="page.currentPage"
@@ -63,10 +63,10 @@
       </div>
     </section>
 
-    <section>
-      <button @click="$emit('someEvent')" :style="buttonStyle">Increase count at subclass</button>
-      <p>Count: {{ count }}</p>
-    </section>
+    <!--    <section>-->
+    <!--      <button @click="$emit('someEvent')" :style="buttonStyle">Increase count at subclass</button>-->
+    <!--      <p>Count: {{ count }}</p>-->
+    <!--    </section>-->
 
     <!--Create-->
     <section id="student-input">
@@ -172,7 +172,7 @@ const formInline = reactive({
 
 const page = reactive({
   currentPage: 1,
-  pageSize: 5,
+  pageSize: 10,
   totalElement: 0,
 })
 const form = ref(null);

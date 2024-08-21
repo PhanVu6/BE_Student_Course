@@ -4,7 +4,7 @@ import {Menu as IconMenu} from '@element-plus/icons-vue'
 import TableStudent from '@/components/TableStudent.vue'
 import TableCourse from '@/components/TableCourse.vue'
 
-const statusViewStudent = ref(false);
+const statusViewStudent = ref(true);
 const statusViewCourse = ref(false);
 const count = ref(0);
 const name = ref("Hồng");
@@ -52,14 +52,14 @@ const handleChange = (newName) => {
     <el-container>
       <el-header style="text-align: center; font-size: 40px;">
         <div class="toolbar">
-          <span>Manager Student</span>
+          <span>Welcome To Manager Students-Courses</span>
         </div>
       </el-header>
 
       <el-main>
         <div style="overflow: auto; height: 80vh" v-if="statusViewStudent">
           <TableStudent :count="count" :name="name" @some-event="increaseCount" @customChange="handleChange"/>
-          <button @click="increaseCount">Increase count</button>
+          <!--          <button @click="increaseCount">Increase count</button>-->
         </div>
         <div style="overflow: auto; height: 80vh" v-if="statusViewCourse">
           <TableCourse/>
