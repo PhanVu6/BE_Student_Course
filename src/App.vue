@@ -1,12 +1,12 @@
 <script setup>
 import HomePages from './pages/index.vue'
-import Table from './components/TableCourse.vue'
+// import Table from './components/TableCourse.vue'
 </script>
 
 <template>
   <main>
     <HomePages/>
-    <Table/>
+    <!--    <Table/>-->
   </main>
 </template>
 
