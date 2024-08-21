@@ -28,9 +28,9 @@ public class CourseService {
     private final StudentCourseService studentCourseService;
     private CourseMapper courseMapper = CourseMapper.INSTANCE;
 
-    public ApiResponse<Page<CourseDto>> getAll(int number, int size) {
+    public ApiResponse<Page<CourseDto>> getAll(String title, int number, int size) {
         Pageable pageable = PageRequest.of(number, size);
-        Page<Course> courseList = courseRepository.findAll(pageable);
+        Page<Course> courseList = courseRepository.findAllCourse(title, pageable);
         List<CourseDto> courseDtos = courseMapper.DTO_LIST(courseList.getContent());
         Page<CourseDto> results = new PageImpl<>(courseDtos, pageable, courseList.getTotalElements());
 

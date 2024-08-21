@@ -242,6 +242,20 @@ public class StudentService {
      * PUT
      */
     @Transactional
+    public ApiResponse<StudentDto> updateStudent(StudentDto studentDto) {
+        Student student = studentRepository.findById(studentDto.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));
+        student = studentMapper.toEntity(studentDto);
+        student = studentRepository.save(student);
+        StudentDto result = studentMapper.toDto(student);
+
+        ApiResponse<StudentDto> response = new ApiResponse<>();
+        response.setResult(result);
+        response.setMessage(messageSource.getMessage("success.update", null, LocaleContextHolder.getLocale()));
+        return response;
+    }
+
+    @Transactional
     public ApiResponse<StudentDto> update(UpdateStudentCourseDto inpUpdate) {
         Student student = studentRepository.findById(inpUpdate.getStudentId())
                 .orElseThrow(() -> new AppException(ErrorCode.STUDENT_NOT_FOUND));

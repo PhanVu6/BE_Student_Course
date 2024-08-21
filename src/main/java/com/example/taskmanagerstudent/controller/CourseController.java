@@ -16,9 +16,11 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping
-    public ApiResponse<Page<CourseDto>> getAll(@RequestParam(value = "number", required = false, defaultValue = "0") int number,
+    public ApiResponse<Page<CourseDto>> getAll(@RequestParam(value = "title", required = false)
+                                               String title,
+                                               @RequestParam(value = "number", required = false, defaultValue = "0") int number,
                                                @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
-        return courseService.getAll(number, size);
+        return courseService.getAll(title, number, size);
     }
 
     @GetMapping("get-course/{id}")
